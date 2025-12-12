@@ -1,0 +1,23 @@
+# Source files
+src/
+native/
+
+# Build artifacts
+build/
+*.tsbuildinfo
+
+# Development files
+.vscode/
+.idea/
+*.log
+*.plan.md
+
+# Tests
+**/__tests__/
+vitest.config.ts
+
+# Example files
+example.js
+src/example.ts
+
+
