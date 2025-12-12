@@ -4,6 +4,8 @@ A high-performance, **zero-dependency** TypeScript library for parsing and gener
 
 Supports the **ICAO 9303 TD3 specification** - the standard machine-readable zone format used in international passports.
 
+![MRZ Format Explained](images/mrz-explained.jpg)
+
 ## Features
 
 - **Zero Dependencies**: Pure TypeScript, no external packages required
@@ -201,8 +203,6 @@ Optimizations:
 ## TD3 Passport Format (ICAO 9303)
 
 This library **only supports TD3 format** - the two-line machine-readable zone used in international passports according to the ICAO 9303 specification.
-
-![MRZ Format Explained](images/mrz-explained.jpg)
 
 TD3 format consists of 2 lines of 44 characters each:
 
