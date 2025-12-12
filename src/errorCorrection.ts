@@ -9,23 +9,47 @@ import { fastValidateTD3CheckDigits } from './checkDigit.js';
 import type { ParseResult, CorrectionMetrics } from './types.js';
 
 /**
- * Ambiguous character pairs that are commonly confused in OCR
- * Maps from commonly misread characters (usually letters) to their correct form (usually numbers)
+ * Ambiguous character groups that are commonly confused in OCR
+ * Each group contains characters that can all be mistaken for each other
  */
-const AMBIGUOUS_CHARS: Array<[string, string[]]> = [
-  ['S', ['5']],
-  ['5', ['S']],
-  ['I', ['1', 'l']],
-  ['1', ['I']],
-  ['O', ['0']],
-  ['0', ['O']],
-  ['B', ['8']],
-  ['8', ['B']],
-  ['l', ['1', 'I']],
-  ['Z', ['2']],
-  ['7', ['2']],
-  ['G', ['6']]
+const AMBIGUOUS_CHAR_GROUPS: string[][] = [
+  ['S', '5'],
+  ['I', 'l', '1'],
+  ['O', '0'],
+  ['B', '8'],
+  ['Z', '2', '7'],
+  ['G', '6']
 ];
+
+/**
+ * Generate mappings from character groups
+ * Each character in a group maps to all other characters in that group
+ */
+function generateAmbiguousCharMap(): Array<[string, string[]]> {
+  const map = new Map<string, Set<string>>();
+  
+  // For each group, make every character map to every other character in the group
+  for (const group of AMBIGUOUS_CHAR_GROUPS) {
+    for (let i = 0; i < group.length; i++) {
+      const char = group[i];
+      if (!map.has(char)) map.set(char, new Set());
+      
+      // Add all other characters in the group as alternatives
+      for (let j = 0; j < group.length; j++) {
+        if (i !== j) {
+          map.get(char)!.add(group[j]);
+        }
+      }
+    }
+  }
+  
+  // Convert to array format
+  return Array.from(map.entries()).map(([char, alternatives]) => 
+    [char, Array.from(alternatives)]
+  );
+}
+
+const AMBIGUOUS_CHARS = generateAmbiguousCharMap();
 
 /**
  * Position of an ambiguous character
@@ -101,9 +125,11 @@ function padMRZLine(line: string, targetLength: number, isLine2: boolean = false
 /**
  * Find all positions of ambiguous characters in a string
  * Only applies to Line 2
+ * The last 2 positions (42-43) are checksum digits and can only be 0-9 or <
  */
 function findAmbiguousPositions(str: string): AmbiguousPosition[] {
   const positions: AmbiguousPosition[] = [];
+  const validChecksumChars = new Set('0123456789<');
 
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
@@ -111,7 +137,18 @@ function findAmbiguousPositions(str: string): AmbiguousPosition[] {
     // Check ambiguous chars list
     for (const [from, toList] of AMBIGUOUS_CHARS) {
       if (char === from) {
-        positions.push({ pos: i, original: char, alternatives: [...toList] });
+        let alternatives = [...toList];
+        
+        // For the last 2 positions (checksum digits), only allow 0-9 and <
+        if (i >= str.length - 2) {
+          alternatives = alternatives.filter(alt => validChecksumChars.has(alt));
+          // Skip this position if no valid alternatives remain
+          if (alternatives.length === 0) {
+            break;
+          }
+        }
+        
+        positions.push({ pos: i, original: char, alternatives });
         break; // Only one match per character
       }
     }
