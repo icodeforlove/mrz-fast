@@ -3,9 +3,7 @@ src/
 native/
 
 # Readme files
-README.md
 LICENSE
-images/
 
 # Build artifacts
 build/
@@ -24,5 +22,3 @@ vitest.config.ts
 # Example files
 example.js
 src/example.ts
-
-
