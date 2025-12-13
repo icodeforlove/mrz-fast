@@ -2,9 +2,6 @@
 src/
 native/
 
-# Readme files
-LICENSE
-
 # Build artifacts
 build/
 *.tsbuildinfo
