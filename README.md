@@ -86,6 +86,8 @@ One of the most powerful features is automatic error correction, especially usef
 - **AI models** that generate MRZ codes with common mistakes
 - **Damaged or unclear scans** of physical documents
 
+[![MRZ Error Correction Example](https://i.ibb.co/93CnWJ04/mrz-codes.jpg)](https://mrz.codes)
+
 ```typescript
 import { parseMRZ } from 'mrz-fast';
 
