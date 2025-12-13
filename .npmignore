@@ -2,6 +2,11 @@
 src/
 native/
 
+# Readme files
+README.md
+LICENSE
+images/
+
 # Build artifacts
 build/
 *.tsbuildinfo

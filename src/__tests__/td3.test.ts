@@ -5,6 +5,18 @@
 
 import { describe, it, expect } from 'vitest';
 import { parseMRZ } from '../index.js';
+import type { ParseResult } from '../types.js';
+
+/**
+ * Helper function to assert validity and log errors if invalid
+ */
+function expectValid(result: ParseResult) {
+  if (!result.valid) {
+    const errors = result.details.filter(d => !d.valid);
+    console.log('Validation failed:', errors.map(e => `${e.label}: ${e.error || 'invalid'}`).join(', '));
+  }
+  expect(result.valid).toBe(true);
+}
 
 describe('TD3 MRZ Parser', () => {
   it('should parse Utopia example passport', () => {
@@ -40,7 +52,7 @@ describe('TD3 MRZ Parser', () => {
     // Real country code validation would require maintaining a full ISO 3166 list
     expect(result.fields.issuingState).toBe('UTO');
     expect(result.fields.nationality).toBe('UTO');
-    expect(result.valid).toBe(true);
+    expectValid(result);
   });
 
   it('should parse German passport example', () => {
@@ -52,7 +64,7 @@ describe('TD3 MRZ Parser', () => {
     const result = parseMRZ(mrz);
 
     expect(result.format).toBe('TD3');
-    expect(result.valid).toBe(true);
+    expectValid(result);
     expect(result.documentNumber).toBe('C01X0006H');
 
     expect(result.fields).toMatchObject({
@@ -83,7 +95,7 @@ describe('TD3 MRZ Parser', () => {
     const result = parseMRZ(mrz);
 
     expect(result.format).toBe('TD3');
-    expect(result.valid).toBe(true);
+    expectValid(result);
 
     expect(result.fields.lastName).toBe('');
     expect(result.fields.firstName).toBe('FIRST NAME');
@@ -99,7 +111,7 @@ describe('TD3 MRZ Parser', () => {
     const result = parseMRZ(mrz);
 
     expect(result.format).toBe('TD3');
-    expect(result.valid).toBe(true);
+    expectValid(result);
 
     expect(result.fields).toMatchObject({
       documentCode: 'PO',
@@ -129,7 +141,7 @@ describe('TD3 MRZ Parser', () => {
     const result = parseMRZ(mrz);
 
     expect(result.format).toBe('TD3');
-    expect(result.valid).toBe(true);
+    expectValid(result);
 
     expect(result.fields).toMatchObject({
       documentCode: 'PT',
@@ -147,6 +159,37 @@ describe('TD3 MRZ Parser', () => {
       personalNumber: 'LCOCMKNENBPJB9',
       personalNumberCheckDigit: '8',
       compositeCheckDigit: '4',
+    });
+  });
+
+  it('should parse passport card (PC)', () => {
+    const mrz: [string, string] = [
+      'PCUSASMITH<<JOHN<ROBERT<<<<<<<<<<<<<<<<<<<<<',
+      'A123456784USA8901011M2512314<<<<<<<<<<<<<<08',
+    ];
+
+    const result = parseMRZ(mrz);
+
+    expect(result.format).toBe('TD3');
+    expectValid(result);
+
+  
+    expect(result.fields).toMatchObject({
+      documentCode: 'PC',
+      issuingState: 'USA',
+      lastName: 'SMITH',
+      firstName: 'JOHN ROBERT',
+      documentNumber: 'A12345678',
+      documentNumberCheckDigit: '4',
+      nationality: 'USA',
+      birthDate: '890101',
+      birthDateCheckDigit: '1',
+      sex: 'male',
+      expirationDate: '251231',
+      expirationDateCheckDigit: '4',
+      personalNumber: '',
+      personalNumberCheckDigit: '0',
+      compositeCheckDigit: '8',
     });
   });
 

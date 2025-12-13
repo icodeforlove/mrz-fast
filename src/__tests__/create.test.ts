@@ -5,7 +5,18 @@
 import { describe, it, expect } from 'vitest';
 import { createMRZ } from '../createMRZ.js';
 import { parseMRZ } from '../index.js';
-import type { CreateMRZInput } from '../types.js';
+import type { CreateMRZInput, ParseResult } from '../types.js';
+
+/**
+ * Helper function to assert validity and log errors if invalid
+ */
+function expectValid(result: ParseResult) {
+  if (!result.valid) {
+    const errors = result.details.filter(d => !d.valid);
+    console.log('Validation failed:', errors.map(e => `${e.label}: ${e.error || 'invalid'}`).join(', '));
+  }
+  expect(result.valid).toBe(true);
+}
 
 describe('createMRZ', () => {
   describe('basic functionality', () => {
@@ -32,7 +43,7 @@ describe('createMRZ', () => {
 
       // Verify it parses correctly
       const result = parseMRZ([line1, line2]);
-      expect(result.valid).toBe(true);
+      expectValid(result);
       expect(result.fields.documentNumber).toBe('L898902C3');
       expect(result.fields.lastName).toBe('ERIKSSON');
       expect(result.fields.firstName).toBe('ANNA MARIA');
@@ -57,7 +68,7 @@ describe('createMRZ', () => {
       expect(line2.length).toBe(44);
 
       const result = parseMRZ([line1, line2]);
-      expect(result.valid).toBe(true);
+      expectValid(result);
       expect(result.fields.sex).toBe('male');
       expect(result.fields.personalNumber).toBe('');
     });
@@ -82,7 +93,7 @@ describe('createMRZ', () => {
       expect(line2.length).toBe(44);
 
       const result = parseMRZ([line1, line2]);
-      expect(result.valid).toBe(true);
+      expectValid(result);
     });
   });
 
@@ -334,6 +345,32 @@ describe('createMRZ', () => {
 
       const [line1] = createMRZ(input);
       expect(line1.substring(0, 2)).toBe('PT');
+    });
+
+    it('should handle PC document code', () => {
+      const input: CreateMRZInput = {
+        documentCode: 'PC',
+        issuingState: 'USA',
+        lastName: 'SMITH',
+        firstName: 'JOHN ROBERT',
+        documentNumber: 'A12345678',
+        nationality: 'USA',
+        birthDate: { year: 1989, month: 1, day: 1 },
+        sex: 'male',
+        expirationDate: { year: 2025, month: 12, day: 31 },
+      };
+
+      const [line1, line2] = createMRZ(input);
+      expect(line1.substring(0, 2)).toBe('PC');
+      expect(line1).toBe('PCUSASMITH<<JOHN<ROBERT<<<<<<<<<<<<<<<<<<<<<');
+      expect(line2).toBe('A123456784USA8901011M2512314<<<<<<<<<<<<<<08');
+
+      // Verify it parses correctly
+      const result = parseMRZ([line1, line2]);
+      expectValid(result);
+      expect(result.fields.documentCode).toBe('PC');
+      expect(result.fields.lastName).toBe('SMITH');
+      expect(result.fields.firstName).toBe('JOHN ROBERT');
     });
   });
 

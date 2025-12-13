@@ -33,7 +33,20 @@ export function parseDocumentCode(code: string): { value: string; error?: string
   }
   
   // Valid passport codes
-  const validCodes = ['P', 'PA', 'PO', 'PT'];
+  const validCodes = [
+    "P", // unspecified
+    "PA", // passport
+    "PC", // passport card
+    "PP", // national/ordinary
+    "PE", // emergency
+    "PD", // diplomatic
+    "PO", // official/service
+    "PR", // refugee
+    "PT", // alien
+    "PS", // stateless
+    "PL", // laissez-passer
+    "PM", // military
+  ];
   if (!validCodes.includes(cleaned)) {
     return { value: cleaned, error: `unknown document code: ${cleaned}` };
   }
