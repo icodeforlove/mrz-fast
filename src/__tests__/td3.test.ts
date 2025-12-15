@@ -193,6 +193,36 @@ describe('TD3 MRZ Parser', () => {
     });
   });
 
+  it('should parse passport book (PB)', () => {
+    const mrz: [string, string] = [
+      'PBUSAJOHNSON<<EMILY<ROSE<<<<<<<<<<<<<<<<<<<<',
+      'B987654323USA9205152F2612317XY1234567<<<<<12',
+    ];
+
+    const result = parseMRZ(mrz);
+
+    expect(result.format).toBe('TD3');
+    expectValid(result);
+
+    expect(result.fields).toMatchObject({
+      documentCode: 'PB',
+      issuingState: 'USA',
+      lastName: 'JOHNSON',
+      firstName: 'EMILY ROSE',
+      documentNumber: 'B98765432',
+      documentNumberCheckDigit: '3',
+      nationality: 'USA',
+      birthDate: '920515',
+      birthDateCheckDigit: '2',
+      sex: 'female',
+      expirationDate: '261231',
+      expirationDateCheckDigit: '7',
+      personalNumber: 'XY1234567',
+      personalNumberCheckDigit: '1',
+      compositeCheckDigit: '2',
+    });
+  });
+
   it('should throw error for invalid line length', () => {
     const mrz: [string, string] = [
       'P<D<<MUSTERMANN<<ERIKA<<<',
