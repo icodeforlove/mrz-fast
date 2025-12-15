@@ -36,6 +36,7 @@ export function parseDocumentCode(code: string): { value: string; error?: string
   const validCodes = [
     "P", // unspecified
     "PA", // passport
+    "PB", // passport book
     "PC", // passport card
     "PP", // national/ordinary
     "PE", // emergency

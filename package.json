@@ -1,6 +1,6 @@
 {
   "name": "mrz-fast",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Zero-dependency TypeScript library for parsing, validating, and generating passport MRZ codes (TD3 / ICAO 9303) with built-in error correction",
   "license": "MIT",
   "author": "Chad Scira <chadvscira@gmail.com> (https://chadscira.com)",
