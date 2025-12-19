@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/mrz-fast.svg?style=flat-square&data=n,v,u,d&color=brightgreen)](https://www.npmjs.com/package/mrz-fast)
+
 # MRZ Fast
 
 A high-performance, **zero-dependency** TypeScript library for parsing and generating passport MRZ codes (TD3 format).
