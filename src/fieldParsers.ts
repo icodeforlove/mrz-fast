@@ -38,15 +38,24 @@ export function parseDocumentCode(code: string): { value: string; error?: string
     "PA", // passport
     "PB", // passport book
     "PC", // passport card
-    "PP", // national/ordinary
-    "PE", // emergency
     "PD", // diplomatic
-    "PO", // official/service
-    "PR", // refugee
-    "PT", // alien
-    "PS", // stateless
+    "PE", // emergency
+    "PJ", // junior passport
+    "PK", // collective passport
     "PL", // laissez-passer
     "PM", // military
+    "PN", // national passport
+    "PO", // official/service
+    "PP", // national/ordinary
+    "PQ", // qualified passport
+    "PR", // refugee
+    "PS", // stateless
+    "PT", // alien
+    "PU", // UN passport
+    "PV", // visa
+    "PW", // work permit
+    "PX", // exit permit
+    "PZ", // special passport
   ];
   if (!validCodes.includes(cleaned)) {
     return { value: cleaned, error: `unknown document code: ${cleaned}` };
