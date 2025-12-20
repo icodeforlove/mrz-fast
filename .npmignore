@@ -19,3 +19,5 @@ vitest.config.ts
 # Example files
 example.js
 src/example.ts
+
+tsconfig.json
